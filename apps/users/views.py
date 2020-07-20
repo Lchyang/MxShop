@@ -35,7 +35,8 @@ class CustomBackend(ModelBackend):
 class SendSMSViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = VerifyMobileSerializer
 
-    def generate_code(self):
+    @staticmethod
+    def generate_code():
         seeds = '0123456789'
         random_str = []
         for _ in range(4):
