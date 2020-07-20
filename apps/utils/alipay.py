@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
 # pip install pycryptodome
-__author__ = 'bobby'
 
 from datetime import datetime
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA256
-from base64 import b64encode, b64decode
 from urllib.parse import quote_plus
-from urllib.parse import urlparse, parse_qs
-from urllib.request import urlopen
 from base64 import decodebytes, encodebytes
 
 import json
@@ -40,7 +36,7 @@ class AliPay(object):
         else:
             self.__gateway = "https://openapi.alipay.com/gateway.do"
 
-    def direct_pay(self, subject, out_trade_no, total_amount, return_url=None, **kwargs):
+    def direct_pay(self, subject, out_trade_no, total_amount, **kwargs):
         biz_content = {
             "subject": subject,
             "out_trade_no": out_trade_no,
@@ -83,22 +79,23 @@ class AliPay(object):
         signed_string = quoted_string + "&sign=" + quote_plus(sign)
         return signed_string
 
-    def ordered_data(self, data):
+    @staticmethod
+    def ordered_data(data):
         complex_keys = []
-        for key, value in data.items():
-            if isinstance(value, dict):
-                complex_keys.append(key)
+        for k, val in data.items():
+            if isinstance(val, dict):
+                complex_keys.append(k)
 
         # 将字典类型的数据dump出来
-        for key in complex_keys:
-            data[key] = json.dumps(data[key], separators=(',', ':'))
+        for k in complex_keys:
+            data[k] = json.dumps(data[k], separators=(',', ':'))
 
         return sorted([(k, v) for k, v in data.items()])
 
     def sign(self, unsigned_string):
         # 开始计算签名
-        key = self.app_private_key
-        signer = PKCS1_v1_5.new(key)
+        p_key = self.app_private_key
+        signer = PKCS1_v1_5.new(p_key)
         signature = signer.sign(SHA256.new(unsigned_string))
         # base64 编码，转换为unicode表示并移除回车
         sign = encodebytes(signature).decode("utf8").replace("\n", "")
@@ -106,8 +103,8 @@ class AliPay(object):
 
     def _verify(self, raw_content, signature):
         # 开始计算签名
-        key = self.alipay_public_key
-        signer = PKCS1_v1_5.new(key)
+        p_key = self.alipay_public_key
+        signer = PKCS1_v1_5.new(p_key)
         digest = SHA256.new()
         digest.update(raw_content.encode("utf8"))
         if signer.verify(digest, decodebytes(signature.encode("utf8"))):
@@ -120,33 +117,33 @@ class AliPay(object):
         message = "&".join(u"{}={}".format(k, v) for k, v in unsigned_items)
         return self._verify(message, signature)
 
-
-if __name__ == "__main__":
-
-    alipay = AliPay(
-        appid="2016102600761595",
-        app_notify_url="http://81.70.37.90:8081/alipay/return",
-        app_private_key_path="/home/lichy/project/MxShop/apps/trade/keys/private_2048.txt",
-        alipay_public_key_path="/home/lichy/project/MxShop/apps/trade/keys/alipay_2048_key.txt",
-        # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
-        debug=True,  # 默认False,
-        return_url="http://81.70.37.90:8081/alipay/return"
-    )
-
-    return_url = 'http://81.70.37.90/?charset=utf-8&out_trade_no=20170202122666688&method=alipay.trade.page.pay.return&total_amount=100.00&sign=dQ6hIyDBYQLLb%2FkfqSLJMGSKhlwqYFFpQw4GRUq8hbwDoPUTdL49Kbr%2FJ1xzCIf11IAgye4JgLGkihgLaEEM3lkTp0gep2a3%2B7xsivkrY7I59E15x1XNmwIw97HG2zZpiG9Gzb5zTiCSwb3h5usU9ZRRUr9mpDU6XuLNsYteJr0G%2BclHqiZPCih8PGl4ahu33uLJ%2F8IMNjRwklGpfdAaAj6%2Fh1cYZVgNSrHFibL0VHRSwVoff4gI2ARj9lcwUHMS1SRJKl5olTFUp3NMPc5OjnYVuIdnI1Y6jQ8vwBeNhU9rFt3T9ptl5uEQ1Sv5SwGBbW8c8TiSOQQPcOBux4vfqQ%3D%3D&trade_no=2020072022001402290500991953&auth_app_id=2016102600761595&version=1.0&app_id=2016102600761595&sign_type=RSA2&seller_id=2088102181084902&timestamp=2020-07-20+10%3A07%3A25'
-    o = urlparse(return_url)
-    query = parse_qs(o.query)
-    processed_query = {}
-    ali_sign = query.pop("sign")[0]
-    for key, value in query.items():
-        processed_query[key] = value[0]
-    print(alipay.verify(processed_query, ali_sign))
-
-    url = alipay.direct_pay(
-        subject="测试订单",
-        out_trade_no="20170202122666622k",
-        total_amount=100,
-        return_url="http://81.70.37.90/alipay/return"
-    )
-    re_url = "https://openapi.alipaydev.com/gateway.do?{data}".format(data=url)
-    print(re_url)
+# if __name__ == "__main__":
+# 测试代码
+# from urllib.parse import urlparse, parse_qs
+# alipay = AliPay(
+#     appid="2016102600761595",
+#     app_notify_url="http://81.70.37.90:8081/alipay/return",
+#     app_private_key_path="/home/lichy/project/MxShop/apps/trade/keys/private_2048.txt",
+#     alipay_public_key_path="/home/lichy/project/MxShop/apps/trade/keys/alipay_2048_key.txt",
+#     # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+#     debug=True,  # 默认False,
+#     return_url="http://81.70.37.90:8081/alipay/return"
+# )
+#
+# return_url = 'http://81.70.37.90/?charset=utf-8&out_trade_no=20170202122666688&method=alipay.trade.page.pay.return&total_amount=100.00&sign=dQ6hIyDBYQLLb%2FkfqSLJMGSKhlwqYFFpQw4GRUq8hbwDoPUTdL49Kbr%2FJ1xzCIf11IAgye4JgLGkihgLaEEM3lkTp0gep2a3%2B7xsivkrY7I59E15x1XNmwIw97HG2zZpiG9Gzb5zTiCSwb3h5usU9ZRRUr9mpDU6XuLNsYteJr0G%2BclHqiZPCih8PGl4ahu33uLJ%2F8IMNjRwklGpfdAaAj6%2Fh1cYZVgNSrHFibL0VHRSwVoff4gI2ARj9lcwUHMS1SRJKl5olTFUp3NMPc5OjnYVuIdnI1Y6jQ8vwBeNhU9rFt3T9ptl5uEQ1Sv5SwGBbW8c8TiSOQQPcOBux4vfqQ%3D%3D&trade_no=2020072022001402290500991953&auth_app_id=2016102600761595&version=1.0&app_id=2016102600761595&sign_type=RSA2&seller_id=2088102181084902&timestamp=2020-07-20+10%3A07%3A25'
+# o = urlparse(return_url)
+# query = parse_qs(o.query)
+# processed_query = {}
+# ali_sign = query.pop("sign")[0]
+# for key, value in query.items():
+#     processed_query[key] = value[0]
+# print(alipay.verify(processed_query, ali_sign))
+#
+# url = alipay.direct_pay(
+#     subject="测试订单",
+#     out_trade_no="20170202122666622k",
+#     total_amount=100,
+#     return_url="http://81.70.37.90/alipay/return"
+# )
+# re_url = "https://openapi.alipaydev.com/gateway.do?{data}".format(data=url)
+# print(re_url)
