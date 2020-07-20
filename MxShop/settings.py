@@ -173,3 +173,11 @@ REGEX_MOBILE = '^[1]([3-9])[0-9]{9}$'
 APIKEY = ''
 
 # APPEND_SLASH = False
+
+APP_PRIVATE_KEY_PATH = os.path.join(BASE_DIR, "apps/trade/keys/private_2048.txt")
+ALIPAY_PUBLIC_KEY_PATH = os.path.join(BASE_DIR, "apps/trade/keys/alipay_2048_key.txt")
+
+RETURN_URL = "http://81.70.37.90:8081/alipay/return"
+NOTIFY_URL = "http://81.70.37.90:8081/alipay/return"
+
+APP_ID = "2016102600761595"
