@@ -23,7 +23,7 @@ from rest_framework.documentation import include_docs_urls
 import xadmin
 
 from MxShop.settings import MEDIA_ROOT
-from goods.views import GoodsViewSet, CategoryViewSet
+from goods.views import GoodsViewSet, CategoryViewSet, IndexCategoryVeiwSet
 from users.views import SendSMSViewSet, UserViewSet
 from users_operation.views import UserFavViewSet
 from trade.views import ShoppingCartViewSet, OrderViewSet
@@ -37,6 +37,7 @@ router.register(r'users', UserViewSet, base_name='users')
 router.register(r'userfavs', UserFavViewSet, base_name='user_favs')
 router.register(r'shopcart', ShoppingCartViewSet, base_name='shop_cart')
 router.register(r'order', OrderViewSet, base_name='order')
+router.register(r'indexcategory', IndexCategoryVeiwSet, base_name='indexcategory')
 
 urlpatterns = [
     path('xadmin/', xadmin.site.urls),

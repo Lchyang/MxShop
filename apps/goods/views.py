@@ -6,7 +6,7 @@ from rest_framework import filters as drf_filter
 from rest_framework.pagination import PageNumberPagination
 
 from .filter import ProductFilter
-from .serializer import GoodsSerializer, CategorySerializer
+from .serializer import GoodsSerializer, CategorySerializer, IndexCategorySerializer
 from .models import Goods, GoodsCategory
 
 
@@ -46,3 +46,11 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
     """
     queryset = GoodsCategory.objects.filter(category_type=1)
     serializer_class = CategorySerializer
+
+
+class IndexCategoryVeiwSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """
+    首页商品列表展示
+    """
+    queryset =  GoodsCategory.objects.filter(is_tab=True)
+    serializer_class = IndexCategorySerializer
