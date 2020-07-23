@@ -3,6 +3,7 @@ from django_filters import rest_framework as django_filters
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import filters as drf_filter
+from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
 from .filter import ProductFilter
@@ -35,6 +36,13 @@ class GoodsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retrie
     ordering_fields = ['shop_price', 'add_time']
     filterset_class = ProductFilter
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.click_num += 1
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 
 class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
@@ -52,5 +60,5 @@ class IndexCategoryVeiwSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     首页商品列表展示
     """
-    queryset =  GoodsCategory.objects.filter(is_tab=True)
+    queryset = GoodsCategory.objects.filter(is_tab=True)
     serializer_class = IndexCategorySerializer

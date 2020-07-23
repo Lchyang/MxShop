@@ -37,6 +37,30 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
         else:
             return ShopingCartSerializer
 
+    # 通过购物车影响商品数量的逻辑
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        goods = instance.goods
+        goods.goods_num -= instance.nums
+        goods.save()
+
+    def perform_update(self, serializer):
+        shop_cart = ShoppingCart.objects.filter(id=serializer.instance.id)
+        if shop_cart:
+            shop_cart = shop_cart[0]
+        pre_nums = shop_cart.nums
+        instance = serializer.save()
+        goods = instance.goods
+        later_nums = instance.nums
+        goods.goods_num -= (later_nums - pre_nums)
+        goods.save()
+
+    def perform_destroy(self, instance):
+        goods = instance.goods
+        goods.goods_num += instance.nums
+        goods.save()
+        instance.delete()
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
@@ -144,6 +168,11 @@ class AliPayView(APIView):
             trade_no = processed_query.get("trade_no", None)
             exited_orders = OrderInfo.objects.filter(order_sn=order_sn)
             for exited_order in exited_orders:
+                order_goods = exited_order.order_goods.all()
+                for order_good in order_goods:
+                    goods = order_good.goods
+                    goods.goods_num -= order_good.goods_num
+                    goods.save()
                 exited_order.trade_no = trade_no
                 exited_order.pay_status = pay_status
                 exited_order.pay_time = datetime.now()

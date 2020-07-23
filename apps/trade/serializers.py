@@ -38,7 +38,7 @@ class ShopingCartSerializer(serializers.Serializer):
 
     # 更新购物车
     def update(self, instance, validated_data):
-        instance.nums = validated_data['nums']
+        instance.nums = validated_data.get('nums', instance.nums)
         instance.save()
         return instance
 

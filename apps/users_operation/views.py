@@ -17,6 +17,7 @@ class UserFavViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retr
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
     lookup_field = 'goods_id'
 
+
     def get_serializer_class(self):
         if self.action == 'list':
             return UserFavDetailSerializer
@@ -26,3 +27,9 @@ class UserFavViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retr
 
     def get_queryset(self):
         return UserFav.objects.filter(user=self.request.user)
+
+    # def perform_create(self, serializer):
+    #     instance = serializer.save()
+    #     good = instance.goods
+    #     good.fav_num += 1
+    #     good.save()

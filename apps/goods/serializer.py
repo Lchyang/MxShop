@@ -59,14 +59,14 @@ class IndexCategorySerializer(serializers.ModelSerializer):
             ad_good = ad_goods[0]
             good = Goods.objects.filter(name=ad_good.goods)
             # 当序列化是一个查询集的时候也就是querset的时候many=True
-            good_serializer = GoodsSerializer(good, many=True)
+            good_serializer = GoodsSerializer(good, many=True, context={'request': self.context['request']})
             return good_serializer.data
 
     def get_goods(self, obj):
         goods = Goods.objects.filter(
             Q(category_id=obj.id) | Q(category__parent_category_id=obj.id) | Q(
                 category__parent_category__parent_category_id=obj.id))
-        goods_serializers = GoodsSerializer(goods, many=True)
+        goods_serializers = GoodsSerializer(goods, many=True, context={'request': self.context['request']})
         return goods_serializers.data
 
     class Meta:
