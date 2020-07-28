@@ -7,8 +7,10 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
 from .filter import ProductFilter
-from .serializer import GoodsSerializer, CategorySerializer, IndexCategorySerializer
+from .serializer import (GoodsSerializer, CategorySerializer,
+                         IndexCategorySerializer)
 from .models import Goods, GoodsCategory
+from .nomodeviews import get_data
 
 
 # class GoodsListView(APIView):
@@ -27,11 +29,13 @@ class GoodsPagination(PageNumberPagination):
     max_page_size = 10000
 
 
-class GoodsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class GoodsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
+                   mixins.RetrieveModelMixin):
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
     pagination_class = GoodsPagination
-    filter_backends = (django_filters.DjangoFilterBackend, drf_filter.SearchFilter, drf_filter.OrderingFilter)
+    filter_backends = (django_filters.DjangoFilterBackend,
+                       drf_filter.SearchFilter, drf_filter.OrderingFilter)
     search_fields = ['name', 'shop_price']
     ordering_fields = ['shop_price', 'add_time']
     filterset_class = ProductFilter
@@ -44,7 +48,8 @@ class GoodsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retrie
         return Response(serializer.data)
 
 
-class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                      viewsets.GenericViewSet):
     """
     list:
     获取商品列表

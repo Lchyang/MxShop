@@ -1,16 +1,16 @@
+import django
 import os
 import sys
+
+from db_tools.data.category_data import row_data
+from goods.models import GoodsCategory
 
 pwd = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(pwd)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MxShop.settings')
 
-import django
 django.setup()
 
-from goods.models import GoodsCategory
-
-from db_tools.data.category_data import row_data
 
 for level1 in row_data:
     level1_instance = GoodsCategory()
@@ -34,5 +34,3 @@ for level1 in row_data:
             level3_instance.category_type = 3
             level3_instance.parent_category = level2_instance
             level3_instance.save()
-
-

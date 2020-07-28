@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -7,9 +8,12 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.views import APIView
 
 from utils.permissons import IsOwnerOrReadOnly
+from utils.alipay import AliPay
 from .models import ShoppingCart, OrderGoods, OrderInfo
-from .serializers import ShopingCartSerializer, ShopCartDetailSerializer, OrderInfoSerializer, \
-    OrderInfoDetailSerializer
+from .serializers import ShopingCartSerializer, ShopCartDetailSerializer,\
+    OrderInfoSerializer, OrderInfoDetailSerializer
+from MxShop.settings import APP_PRIVATE_KEY_PATH, ALIPAY_PUBLIC_KEY_PATH, \
+    RETURN_URL, NOTIFY_URL
 
 
 class ShoppingCartViewSet(viewsets.ModelViewSet):
@@ -23,7 +27,8 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     """
     serializer_class = ShopingCartSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
-    authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
+    authentication_classes = (
+        JSONWebTokenAuthentication, SessionAuthentication)
     lookup_field = 'goods_id'
 
     # queryset or get_queryset 是list功能的参数
@@ -64,7 +69,8 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
 
 class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
-    authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
+    authentication_classes = (
+        JSONWebTokenAuthentication, SessionAuthentication)
 
     def get_queryset(self):
         queryset = OrderInfo.objects.filter(user=self.request.user)
@@ -91,11 +97,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             shop_cart.delete()
         if order_goods:
             return order_goods
-
-
-from utils.alipay import AliPay
-from MxShop.settings import APP_PRIVATE_KEY_PATH, ALIPAY_PUBLIC_KEY_PATH, RETURN_URL, NOTIFY_URL
-from rest_framework.response import Response
 
 
 class AliPayView(APIView):

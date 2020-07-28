@@ -28,7 +28,9 @@ from users.views import SendSMSViewSet, UserViewSet
 from users_operation.views import UserFavViewSet
 from trade.views import ShoppingCartViewSet, OrderViewSet
 from trade.views import AliPayView
+# from goods.nomodeviews import HandelGoodsView
 
+# TODO viwset 和 router 之间怎么调用的逻辑需要进一步源码分型
 router = DefaultRouter()
 router.register(r'goods', GoodsViewSet, base_name='goods')
 router.register(r'categorys', CategoryViewSet, base_name='categorys')
@@ -50,6 +52,8 @@ urlpatterns = [
     re_path(r'^api-token-auth', views.obtain_auth_token),
     # jwt token 认证
     re_path(r'^login', obtain_jwt_token),
-    re_path(r'^alipay/return', AliPayView.as_view(), name="alipay")
+    re_path(r'^alipay/return', AliPayView.as_view(), name="alipay"),
+
+    # re_path(r'^handle', HandelGoodsView.as_view(), name="handle")
 
 ]
