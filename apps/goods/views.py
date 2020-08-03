@@ -36,9 +36,9 @@ class GoodsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
     pagination_class = GoodsPagination
     filter_backends = (django_filters.DjangoFilterBackend,
                        drf_filter.SearchFilter, drf_filter.OrderingFilter)
-    search_fields = ['name', 'shop_price']
-    ordering_fields = ['shop_price', 'add_time']
-    filterset_class = ProductFilter
+    search_fields = ('=name', 'goods-brief', 'goods_desc')
+    ordering_fields = ('shop_price', 'sold_num')
+    filter_class = ProductFilter
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
