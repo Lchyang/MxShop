@@ -14,7 +14,7 @@ class GoodsCategory(models.Model):
         (3, "三级类目"),
     )
 
-    # verbose_name xadmin 后台管理中字段名称， help_text生成文档中的字段名称
+    # verbose_name admin 后台管理中字段名称， help_text生成文档中的字段名称
     name = models.CharField(default="", max_length=30, verbose_name="类别名", help_text="类别名")
     code = models.CharField(default="", max_length=30, verbose_name="类别code", help_text="类别code")
     desc = models.TextField(default="", verbose_name="类别描述", help_text="类别描述")

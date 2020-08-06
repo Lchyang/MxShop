@@ -58,7 +58,7 @@ class IndexCategorySerializer(serializers.ModelSerializer):
         if ad_goods:
             ad_good = ad_goods[0]
             good = Goods.objects.filter(name=ad_good.goods)
-            # 当序列化是一个查询集的时候也就是querset的时候many=True
+            # 当序列化是一个查询集的时候也就是queryset的时候many=True
             good_serializer = GoodsSerializer(good, many=True, context={'request': self.context['request']})
             return good_serializer.data
 

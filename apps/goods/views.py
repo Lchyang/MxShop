@@ -10,7 +10,6 @@ from .filter import ProductFilter
 from .serializer import (GoodsSerializer, CategorySerializer,
                          IndexCategorySerializer)
 from .models import Goods, GoodsCategory
-from .nomodeviews import get_data
 
 
 # class GoodsListView(APIView):
@@ -31,6 +30,13 @@ class GoodsPagination(PageNumberPagination):
 
 class GoodsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
                    mixins.RetrieveModelMixin):
+    """
+    list:
+    获取商品列表
+
+    retrieve:
+    获取商品详情
+    """
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
     pagination_class = GoodsPagination
@@ -52,17 +58,18 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
                       viewsets.GenericViewSet):
     """
     list:
-    获取商品列表
+    获取商品分类列表
 
     retrieve:
-    获取商品详情
+    获取商品分类详情
     """
     queryset = GoodsCategory.objects.filter(category_type=1)
     serializer_class = CategorySerializer
 
 
-class IndexCategoryVeiwSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class IndexCategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
+    list:
     首页商品列表展示
     """
     queryset = GoodsCategory.objects.filter(is_tab=True)
