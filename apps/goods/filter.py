@@ -9,7 +9,8 @@ class ProductFilter(filters.FilterSet):
     name = filters.CharFilter(field_name='name', lookup_expr='icontains')
     top_category = filters.NumberFilter(field_name='top_category', method='top_category_filters')
 
-    def top_category_filters(self, queryset, name, value):
+    @staticmethod
+    def top_category_filters(queryset, _, value):
         return queryset.filter(
             Q(category_id=value) | Q(category__parent_category_id=value) | Q(
                 category__parent_category__parent_category_id=value))

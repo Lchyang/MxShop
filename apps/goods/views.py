@@ -12,12 +12,6 @@ from .serializer import (GoodsSerializer, CategorySerializer,
 from .models import Goods, GoodsCategory
 
 
-# class GoodsListView(APIView):
-#     def get(self, request, format=None):
-#         goods = Goods.objects.all()
-#         serializer = GoodsSerializer(goods, many=True)
-#         return Response(serializer.data)
-
 # APIView 只是对django view 进行简单的封装， genericsAPIView 进行了序列化，分页等操作
 # mixin 对http的操作进行的封装
 # ViewSet 对通过重写as_view 方法对路由实现了简化。

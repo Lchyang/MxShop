@@ -11,7 +11,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MxShop.settings')
 
 django.setup()
 
-
 for level1 in row_data:
     level1_instance = GoodsCategory()
     level1_instance.code = level1['code']

@@ -160,10 +160,10 @@ class AliPayView(APIView):
             debug=True,  # 默认False,
             return_url=RETURN_URL,
         )
-        verfiy = alipay.verify(processed_query, ali_sign)
+        verity = alipay.verify(processed_query, ali_sign)
 
         # 如果验证通过，将数据同步到数据库，更新订单状
-        if verfiy is True:
+        if verity is True:
             order_sn = processed_query.get("out_trade_no", None)
             pay_status = processed_query.get("trade_status", None)
             trade_no = processed_query.get("trade_no", None)

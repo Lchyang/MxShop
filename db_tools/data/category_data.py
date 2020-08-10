@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# encoding: utf-8
-
 row_data = [
     {
         'sub_categorys': [
